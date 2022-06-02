@@ -59,9 +59,9 @@ CREATE TABLE jogador(
     id_cidade				INT UNSIGNED,
     id_equipa				INT	UNSIGNED,
     CONSTRAINT pk_jogador PRIMARY KEY(id_jogador),
-    CONSTRAINT fk_jogador_equipa FOREIGN KEY(id_equipa) REFERENCES equipa(id_equipa),
     CONSTRAINT fk_jogador_posicao FOREIGN KEY(id_posicao) REFERENCES posicao(id_posicao),
-    CONSTRAINT fk_jogador_cidade FOREIGN KEY(id_cidade) REFERENCES cidade(id_cidade)
+    CONSTRAINT fk_jogador_cidade FOREIGN KEY(id_cidade) REFERENCES cidade(id_cidade),
+	CONSTRAINT fk_jogador_equipa FOREIGN KEY(id_equipa) REFERENCES equipa(id_equipa)
 ) ENGINE=InnoDB;
 
 -- Criar a tabela treinador
@@ -69,22 +69,25 @@ CREATE TABLE treinador(
 	id_treinador	INT	UNSIGNED AUTO_INCREMENT,
     nome			VARCHAR(150) NOT NULL,
     dtaNascimento	DATE,
+    id_cidade       INT UNSIGNED,
     id_equipa       INT UNSIGNED,
-    CONSTRAINT pk_treinador	PRIMARY KEY(id_treinador)
+    CONSTRAINT pk_treinador	PRIMARY KEY(id_treinador),
+    CONSTRAINT fk_treinador_cidade FOREIGN KEY(id_cidade) REFERENCES cidade(id_cidade),
+    CONSTRAINT fk_treinador_equipa FOREIGN KEY(id_equipa) REFERENCES equipa(id_equipa)
 ) ENGINE=InnoDB;
 
 -- Criar a tabela treinador_principal
 CREATE TABLE treinador_principal(
-    id_treinador    INT NOT NULL,
-    qualificacao    ENUM('A', B,),
+    id_treinador    INT UNSIGNED,
+    qualificacao    ENUM('Pro','A', 'B'),
     CONSTRAINT fk_treinador_principal	FOREIGN KEY(id_treinador) REFERENCES treinador(id_treinador)
 ) ENGINE=InnoDB;
 
 -- Criar a tabela treinador_adjunto
 CREATE TABLE treinador_adjunto(
-    id_treinador        INT NOT NULL,
+    id_treinador        INT UNSIGNED,
     responsabilidade	VARCHAR(150),
-    CONSTRAINT fk_treinador_principal	FOREIGN KEY(id_treinador) REFERENCES treinador(id_treinador)
+    CONSTRAINT fk_treinador_adjunto	FOREIGN KEY(id_treinador) REFERENCES treinador(id_treinador)
 ) ENGINE=InnoDB;
 
 -- Criar a tabela arbitro
@@ -96,20 +99,18 @@ CREATE TABLE  arbitro(
     CONSTRAINT fk_arbitro_naturalidade FOREIGN KEY(id_cidade) REFERENCES cidade(id_cidade)
 ) ENGINE=InnoDB;
 
-/*-- Criar a tabela tecnico
+-- Criar a tabela tecnico
 CREATE TABLE tecnico(
 	id_tecnico		INT UNSIGNED AUTO_INCREMENT,
 	nome			VARCHAR(150) NOT NULL,
     idade			INT(2) UNSIGNED,
     id_cidade		INT UNSIGNED,
-    id_cargo		INT	UNSIGNED,
     id_equipa		INT UNSIGNED,
-    CONSTRAINT pk_eqtecnica PRIMARY KEY(id_treinador),
-    CONSTRAINT fk_eqtecnica_cidade FOREIGN KEY(id_cidade) REFERENCES cidade(id_cidade),
-    CONSTRAINT fk_eqtecnica_cargo FOREIGN KEY(id_cargo) REFERENCES cargo(id_cargo),
-    CONSTRAINT fk_eqtecnica_equipa FOREIGN KEY(id_equipa) REFERENCES equipa(id_equipa)
+    CONSTRAINT pk_tecnico PRIMARY KEY(id_tecnico),
+    CONSTRAINT fk_tecnico_cidade FOREIGN KEY(id_cidade) REFERENCES cidade(id_cidade),
+    CONSTRAINT fk_tecnico_equipa FOREIGN KEY(id_equipa) REFERENCES equipa(id_equipa)
 ) ENGINE=InnoDB;
-*/
+
 -- Criar a tabela estadio
 CREATE TABLE  estadio(
 	id_estadio				INT UNSIGNED AUTO_INCREMENT,

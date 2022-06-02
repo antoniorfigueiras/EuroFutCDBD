@@ -15,17 +15,15 @@ INSERT INTO pais VALUES
 (NULL, 'Alemanha', 'DE'),
 (NULL, 'Itália', 'IT'),
 (NULL, 'Uruguai', 'UY');
--- Inserir dados na tabela cargo
-INSERT INTO cargo VALUES 
-(NULL,'Principal'),
-(NULL,'Adjunto'),
-(NULL,'Guarda-Redes'),
-(NULL, 'Preparador Fisico'),
-(NULL, 'Fisiologista'),
-(NULL, 'Fisioterapeuta'),
-(NULL, 'Médico/Enfermeiro'),
-(NULL, 'Nutricionista');
 
+-- Inserir dados na tabela cidade
+INSERT INTO cidade VALUES
+(NULL, 'Lisboa', 1),
+(NULL, 'Lisboa', 1),
+(NULL, 'Lisboa', 1),
+(NULL, 'Lisboa', 1),
+(NULL, 'Lisboa', 1),
+(NULL, 'Lisboa', 1),
 -- Inserir dados na tabela equipa
 INSERT INTO equipa VALUES 
 (NULL, 'Benfica', 'SLB', 'A', 2, 1, LOAD_FILE('c:\\wamp64\\tmp\\benfica.png')),
