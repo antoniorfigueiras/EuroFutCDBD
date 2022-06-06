@@ -13,7 +13,7 @@ USE EuroFut;
 -- Criar a tabela país
 CREATE TABLE pais(
 	id_pais			INT UNSIGNED AUTO_INCREMENT,
-	nome			VARCHAR(20) NOT NULL UNIQUE,
+	nome			VARCHAR(30) NOT NULL UNIQUE,
     abreviatura			VARCHAR(4) NOT NULL,
     CONSTRAINT pk_pais PRIMARY KEY(id_pais)
 ) ENGINE=InnoDB;
@@ -21,19 +21,18 @@ CREATE TABLE pais(
 -- Criar a tabela cidade
 CREATE TABLE cidade(
 	id_cidade		INT UNSIGNED AUTO_INCREMENT,
-	nome			VARCHAR(150) NOT NULL UNIQUE,
+	nome			VARCHAR(50) NOT NULL UNIQUE,
     id_pais			INT UNSIGNED,
     CONSTRAINT pk_cidade PRIMARY KEY(id_cidade),
+    CONSTRAINT uk_cidade_nome UNIQUE KEY (nome),
     CONSTRAINT fk_cidade_pais FOREIGN KEY(id_pais) REFERENCES pais(id_pais)
 ) ENGINE=InnoDB;
 
 -- Criar a tabela equipa
 CREATE TABLE equipa(
 	id_equipa			INT UNSIGNED AUTO_INCREMENT,
-	nome_equipa			VARCHAR(150) NOT NULL,
+	nome_equipa			VARCHAR(50) NOT NULL,
     abreviatura			VARCHAR(4) NOT NULL,
-    grupo_equipa		VARCHAR(1),
-    posicao_final		INT UNSIGNED, /*Posiçao em que ficou no torneio*/
     id_cidade			INT UNSIGNED NOT NULL,
     bandeira			BLOB,
     CONSTRAINT pk_equipas PRIMARY KEY(id_equipa),
@@ -43,7 +42,7 @@ CREATE TABLE equipa(
 -- Criar a tabela posicao
 CREATE TABLE  posicao(
 	id_posicao				VARCHAR(2),
-	desc_posicao			VARCHAR(20) NOT NULL,
+	desc_posicao			VARCHAR(30) NOT NULL,
     CONSTRAINT pk_posicao PRIMARY KEY(id_posicao)
 ) ENGINE=InnoDB;
 
@@ -80,6 +79,7 @@ CREATE TABLE treinador(
 CREATE TABLE treinador_principal(
     id_treinador    INT UNSIGNED,
     qualificacao    ENUM('Pro','A', 'B'),
+    passado_jogador ENUM('S','N'),
     CONSTRAINT fk_treinador_principal	FOREIGN KEY(id_treinador) REFERENCES treinador(id_treinador)
 ) ENGINE=InnoDB;
 
@@ -99,35 +99,23 @@ CREATE TABLE  arbitro(
     CONSTRAINT fk_arbitro_naturalidade FOREIGN KEY(id_cidade) REFERENCES cidade(id_cidade)
 ) ENGINE=InnoDB;
 
--- Criar a tabela tecnico
-CREATE TABLE tecnico(
-	id_tecnico		INT UNSIGNED AUTO_INCREMENT,
-	nome			VARCHAR(150) NOT NULL,
-    idade			INT(2) UNSIGNED,
-    id_cidade		INT UNSIGNED,
-    id_equipa		INT UNSIGNED,
-    CONSTRAINT pk_tecnico PRIMARY KEY(id_tecnico),
-    CONSTRAINT fk_tecnico_cidade FOREIGN KEY(id_cidade) REFERENCES cidade(id_cidade),
-    CONSTRAINT fk_tecnico_equipa FOREIGN KEY(id_equipa) REFERENCES equipa(id_equipa)
-) ENGINE=InnoDB;
-
 -- Criar a tabela estadio
 CREATE TABLE  estadio(
 	id_estadio				INT UNSIGNED AUTO_INCREMENT,
-	nome					VARCHAR(250) NOT NULL,
+	nome					VARCHAR(150) NOT NULL,
     capacidade				INT UNSIGNED,
-    equipa_estadio			INT UNSIGNED,
+    id_equipa_estadio			INT UNSIGNED,
     id_cidade				INT UNSIGNED NOT NULL,
     CONSTRAINT pk_estadio PRIMARY KEY(id_estadio),
 	CONSTRAINT fk_estadio_cidade FOREIGN KEY(id_cidade) REFERENCES cidade(id_cidade),
-	CONSTRAINT fk_estadio_equipa FOREIGN KEY(equipa_estadio) REFERENCES equipa(id_equipa),
+	CONSTRAINT fk_estadio_equipa FOREIGN KEY(id_equipa_estadio) REFERENCES equipa(id_equipa),
     CONSTRAINT uk_estadio_equipa UNIQUE KEY(equipa_estadio)
 ) ENGINE=InnoDB;
 
 -- Criar a tabela torneio
 CREATE TABLE  torneio(
 	id_torneio		INT UNSIGNED AUTO_INCREMENT,
-	nome			VARCHAR(250) NOT NULL,
+	nome			VARCHAR(150) NOT NULL,
     pais			INT UNSIGNED,
     CONSTRAINT pk_torneio PRIMARY KEY(id_torneio),
     CONSTRAINT fk_torneio_pais FOREIGN KEY (pais) REFERENCES pais(id_pais)
@@ -140,7 +128,20 @@ CREATE TABLE  torneio_epoca(
     epoca					YEAR(4),
     vencedor				INT UNSIGNED,
     CONSTRAINT pk_torneio_epoca PRIMARY KEY(id_torneio_epoca),
-    CONSTRAINT fk_torneioepoca_torneio FOREIGN KEY (torneio) REFERENCES torneio(id_torneio)
+    CONSTRAINT fk_torneioepoca_torneio FOREIGN KEY (torneio) REFERENCES torneio(id_torneio),
+    CONSTRAINT fk_torneioepoca_vencedor	FOREIGN KEY (vencedor) REFERENCES equipa(id_equipa)
+) ENGINE=InnoDB;
+
+-- Criar a tabela torneio-epoca
+CREATE TABLE  equipa_torneio(
+	id_equipa_torneio		INT UNSIGNED AUTO_INCREMENT,
+    id_equipa				INT UNSIGNED NOT NULL,
+	id_torneio_epoca		INT UNSIGNED NOT NULL,
+    grupo					VARCHAR(1) NOT NULL,
+    posicao_final			INT,
+    CONSTRAINT pk_equipa_torneio PRIMARY KEY(id_equipa_torneio),
+    CONSTRAINT fk_equipatorneio_equipa 		FOREIGN KEY (id_equipa) REFERENCES equipa(id_equipa),
+    CONSTRAINT fk_equipatorneio_torneio_epoca	FOREIGN KEY (id_torneio_epoca) REFERENCES torneio_epoca(id_torneio_epoca)
 ) ENGINE=InnoDB;
 
 -- Criar a tabela jogo
@@ -154,11 +155,12 @@ CREATE TABLE  jogo(
     id_estadio			INT UNSIGNED,
     id_arbitro			INT UNSIGNED,
     audiencia			INT UNSIGNED,
-    jogador_partida		INT UNSIGNED,
+    id_jogador_da_partida		INT UNSIGNED,
     conclusao_jogo		VARCHAR(20), /*Concluido/Cancelado/Adiado*/
     CONSTRAINT pk_jogo PRIMARY KEY(id_jogo),
     CONSTRAINT fk_jogo_torneioepoca FOREIGN KEY(id_torneio_epoca) REFERENCES torneio_epoca(id_torneio_epoca),
-    CONSTRAINT fk_jogo_estadio FOREIGN KEY(id_estadio) REFERENCES estadio(id_estadio)
+    CONSTRAINT fk_jogo_estadio FOREIGN KEY(id_estadio) REFERENCES estadio(id_estadio),
+    CONSTRAINT fk_jogo_jdpartida	FOREIGN KEY(id_jogador_da_partida) REFERENCES jogador(id_jogador)
 ) ENGINE=InnoDB;
 
 -- Criar a tabela jogo
@@ -167,21 +169,30 @@ CREATE TABLE  jogo_detalhes(
 	id_jogo				INT UNSIGNED,
     id_equipa			INT UNSIGNED,
     resultado			ENUM('V', 'D', 'E'), /*V-Vitoria, D-Derrota, E-Empate*/
-    numero_golos		INT UNSIGNED,
     id_capitao			INT UNSIGNED,
-    CONSTRAINT fk_jogodetalhes	PRIMARY KEY (id_jogo_detalhes),
+    CONSTRAINT pk_jogodetalhes	PRIMARY KEY (id_jogo_detalhes),
     CONSTRAINT fk_jogodetalhes_jogo FOREIGN KEY(id_jogo) REFERENCES jogo(id_jogo),
     CONSTRAINT fk_jogodetalhes_capitao FOREIGN KEY(id_capitao) REFERENCES jogador(id_jogador),
     CONSTRAINT fk_jogodetalhes_equipa FOREIGN KEY(id_equipa) REFERENCES equipa(id_equipa)
 ) ENGINE=InnoDB;
 
--- Criar a tabela estatisticas
-CREATE TABLE  estatisticas_jogador(
-	id_jogador					INT UNSIGNED,
-    golos						INT UNSIGNED,
-    assistencias				INT UNSIGNED,
-    remates						INT UNSIGNED,
-    cartoes_amarelos			INT UNSIGNED,
-    cartoes_vermelhos			INT UNSIGNED,
-    CONSTRAINT fk_estatisticas_jogador FOREIGN KEY(id_jogador) REFERENCES jogador(id_jogador)
+-- Criar a tabela jogador_jogo_detalhes
+CREATE TABLE jogador_jogo_detalhes(
+    id_jogador_jogo_detalhes    INT UNSIGNED AUTO_INCREMENT,
+    id_jogador                  INT UNSIGNED NOT NULL,
+    id_jogo                     INT UNSIGNED NOT NULL,
+    nota                        INT UNSIGNED,
+    minutos_jogados             INT UNSIGNED,
+    golos                       INT UNSIGNED,
+    auto_golos                  INT UNSIGNED,
+    golos_penalti               INT UNSIGNED,
+    penalti_defendidos          INT UNSIGNED,
+    assistencias                INT UNSIGNED,
+    remates                     INT UNSIGNED,
+    remates_baliza              INT UNSIGNED,
+    cartões_amarelos            INT UNSIGNED,
+    cartões_vermelhos           INT UNSIGNED,
+    CONSTRAINT pk_jogador_jogo_detalhes PRIMARY KEY(id_jogador_jogo_detalhes),
+    CONSTRAINT fk_jogadorjogodetalhes_jogador FOREIGN KEY(id_jogador) REFERENCES jogador(id_jogador),
+    CONSTRAINT fk_jogadorjogodetalhes_jogo FOREIGN KEY(id_jogo) REFERENCES jogo(id_jogo)
 ) ENGINE=InnoDB;
