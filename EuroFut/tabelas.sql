@@ -53,10 +53,11 @@ CREATE TABLE jogador(
     numero					INT(2) UNSIGNED,
     id_posicao				VARCHAR(2),
     valor					INT UNSIGNED,
-    nascimento				DATE,
+    dtaNascimento			DATE,
     altura					INT(3) UNSIGNED,
     id_cidade				INT UNSIGNED,
     id_equipa				INT	UNSIGNED,
+    pe_preferido            VARCHAR(3), -- ESQ-PÉ ESQUERDO, DIR-PÉ DIREITO
     CONSTRAINT pk_jogador PRIMARY KEY(id_jogador),
     CONSTRAINT fk_jogador_posicao FOREIGN KEY(id_posicao) REFERENCES posicao(id_posicao),
     CONSTRAINT fk_jogador_cidade FOREIGN KEY(id_cidade) REFERENCES cidade(id_cidade),
@@ -95,6 +96,7 @@ CREATE TABLE  arbitro(
 	id_arbitro		INT UNSIGNED AUTO_INCREMENT,
 	nome			VARCHAR(150) NOT NULL,
     id_cidade		INT UNSIGNED,
+    dtaNascimento   DATE,
     CONSTRAINT pk_arbitro PRIMARY KEY(id_arbitro),
     CONSTRAINT fk_arbitro_naturalidade FOREIGN KEY(id_cidade) REFERENCES cidade(id_cidade)
 ) ENGINE=InnoDB;
@@ -104,12 +106,12 @@ CREATE TABLE  estadio(
 	id_estadio				INT UNSIGNED AUTO_INCREMENT,
 	nome					VARCHAR(150) NOT NULL,
     capacidade				INT UNSIGNED,
-    id_equipa_estadio			INT UNSIGNED,
-    id_cidade				INT UNSIGNED NOT NULL,
+    id_equipa_estadio		INT UNSIGNED,
+    id_cidade				INT UNSIGNED,
     CONSTRAINT pk_estadio PRIMARY KEY(id_estadio),
 	CONSTRAINT fk_estadio_cidade FOREIGN KEY(id_cidade) REFERENCES cidade(id_cidade),
 	CONSTRAINT fk_estadio_equipa FOREIGN KEY(id_equipa_estadio) REFERENCES equipa(id_equipa),
-    CONSTRAINT uk_estadio_equipa UNIQUE KEY(equipa_estadio)
+    CONSTRAINT uk_estadio_equipa UNIQUE KEY(id_equipa_estadio)
 ) ENGINE=InnoDB;
 
 -- Criar a tabela torneio
@@ -165,9 +167,10 @@ CREATE TABLE  jogo(
 
 -- Criar a tabela jogo
 CREATE TABLE  jogo_detalhes(
-	id_jogo_detalhes	INT	UNSIGNED,
+	id_jogo_detalhes	INT	UNSIGNED AUTO_INCREMENT,
 	id_jogo				INT UNSIGNED,
     id_equipa			INT UNSIGNED,
+    golos               INT UNSIGNED,
     resultado			ENUM('V', 'D', 'E'), /*V-Vitoria, D-Derrota, E-Empate*/
     id_capitao			INT UNSIGNED,
     CONSTRAINT pk_jogodetalhes	PRIMARY KEY (id_jogo_detalhes),
@@ -190,8 +193,8 @@ CREATE TABLE jogador_jogo_detalhes(
     assistencias                INT UNSIGNED,
     remates                     INT UNSIGNED,
     remates_baliza              INT UNSIGNED,
-    cartões_amarelos            INT UNSIGNED,
-    cartões_vermelhos           INT UNSIGNED,
+    cartoes_amarelos            INT UNSIGNED,
+    cartoes_vermelhos           INT UNSIGNED,
     CONSTRAINT pk_jogador_jogo_detalhes PRIMARY KEY(id_jogador_jogo_detalhes),
     CONSTRAINT fk_jogadorjogodetalhes_jogador FOREIGN KEY(id_jogador) REFERENCES jogador(id_jogador),
     CONSTRAINT fk_jogadorjogodetalhes_jogo FOREIGN KEY(id_jogo) REFERENCES jogo(id_jogo)
