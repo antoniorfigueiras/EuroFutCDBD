@@ -35,6 +35,7 @@ CREATE TABLE equipa(
     abreviatura			VARCHAR(4) NOT NULL,
     id_cidade			INT UNSIGNED NOT NULL,
     bandeira			BLOB,
+    fundado				YEAR,
     CONSTRAINT pk_equipas PRIMARY KEY(id_equipa),
     CONSTRAINT fk_equipa_cidade FOREIGN KEY(id_cidade) REFERENCES cidade(id_cidade)
 ) ENGINE=InnoDB;
@@ -139,8 +140,8 @@ CREATE TABLE  equipa_torneio(
 	id_equipa_torneio		INT UNSIGNED AUTO_INCREMENT,
     id_equipa				INT UNSIGNED NOT NULL,
 	id_torneio_epoca		INT UNSIGNED NOT NULL,
-    grupo					VARCHAR(1) NOT NULL,
-    posicao_final			INT,
+    -- grupo					VARCHAR(1) NOT NULL,
+    -- posicao_final			INT,
     CONSTRAINT pk_equipa_torneio PRIMARY KEY(id_equipa_torneio),
     CONSTRAINT fk_equipatorneio_equipa 		FOREIGN KEY (id_equipa) REFERENCES equipa(id_equipa),
     CONSTRAINT fk_equipatorneio_torneio_epoca	FOREIGN KEY (id_torneio_epoca) REFERENCES torneio_epoca(id_torneio_epoca)
@@ -151,7 +152,9 @@ CREATE TABLE  jogo(
 	id_jogo				INT UNSIGNED AUTO_INCREMENT,
     id_equipa_casa		INT NOT NULL,
     id_equipa_fora		INT NOT NULL,
-    fase_jogo			ENUM('G','R','Q','S','F') NOT NULL, /*G-FASE DE GRUPOS, R-RONDA 16, Q-QUARTOS DE FINAL, S-SEMIFINAL, F-FINAL*/
+    golos_casa			INT NOT NULL,
+    golos_fora			INT NOT NULL,
+    fase_jogo			ENUM('G','R', 'O', 'Q','S','F') NOT NULL, /*G-FASE DE GRUPOS, R-RONDA 16, O-OITAVOS DE FINAL, Q-QUARTOS DE FINAL, S-SEMIFINAL, F-FINAL*/
     id_torneio_epoca	INT UNSIGNED NOT NULL,
     jogo_data			DATETIME,
     id_estadio			INT UNSIGNED,

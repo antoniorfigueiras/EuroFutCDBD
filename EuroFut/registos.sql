@@ -55,18 +55,18 @@ INSERT INTO cidade VALUES
 
 -- Inserir dados na tabela equipa
 INSERT INTO equipa VALUES 
-(1, 'Benfica', 'SLB', 1, LOAD_FILE('c:\\wamp64\\tmp\\benfica.png')),
-(2, 'Vitória SC', 'VSC', 2, LOAD_FILE('c:\\wamp64\\tmp\\vitoriasc.png')),
-(3, 'SC Covilhã', 'SCC', 3, LOAD_FILE('c:\\wamp64\\tmp\\sccovilha.png')),
-(4, 'Sporting', 'SCP', 1, LOAD_FILE('c:\\wamp64\\tmp\\sporting.png')),
-(5, 'FC Famalicão', 'FCF', 4, LOAD_FILE('c:\\wamp64\\tmp\\fcfamalicao.png')),
-(6, 'FC Penafiel', 'FCP', 5, LOAD_FILE('c:\\wamp64\\tmp\\fcpenafiel.png')),
-(7, 'Boavista', 'BFC', 6, LOAD_FILE('c:\\wamp64\\tmp\\boavista.png')),
-(8, 'Paços de Ferreira', 'FCPF', 7, LOAD_FILE('c:\\wamp64\\tmp\\pacosferreira.png')),
-(9, 'SC Braga', 'SCB', 8, LOAD_FILE('c:\\wamp64\\tmp\\scbraga.png')),
-(10, 'Santa Clara', 'CDSC', 9, LOAD_FILE('c:\\wamp64\\tmp\\santaclara.png')),
-(11, 'FC Porto', 'FCP', 6, LOAD_FILE('c:\\wamp64\\tmp\\fcporto.png')),
-(12, 'Rio Ave', 'RAFC', 10, LOAD_FILE('c:\\wamp64\\tmp\\rioave.png'));
+(1, 'Benfica', 'SLB', 1, LOAD_FILE('c:\\wamp64\\tmp\\benfica.png'), '1904'),
+(2, 'Vitória SC', 'VSC', 2, LOAD_FILE('c:\\wamp64\\tmp\\vitoriasc.png'), '1922'),
+(3, 'SC Covilhã', 'SCC', 3, LOAD_FILE('c:\\wamp64\\tmp\\sccovilha.png'), '1923'),
+(4, 'Sporting', 'SCP', 1, LOAD_FILE('c:\\wamp64\\tmp\\sporting.png'), '1906'),
+(5, 'FC Famalicão', 'FCF', 4, LOAD_FILE('c:\\wamp64\\tmp\\fcfamalicao.png'), '1931'),
+(6, 'FC Penafiel', 'FCP', 5, LOAD_FILE('c:\\wamp64\\tmp\\fcpenafiel.png'), '1951'),
+(7, 'Boavista', 'BFC', 6, LOAD_FILE('c:\\wamp64\\tmp\\boavista.png'), '1903'),
+(8, 'Paços de Ferreira', 'FCPF', 7, LOAD_FILE('c:\\wamp64\\tmp\\pacosferreira.png'), '1950'),
+(9, 'SC Braga', 'SCB', 8, LOAD_FILE('c:\\wamp64\\tmp\\scbraga.png'), '1921'),
+(10, 'Santa Clara', 'CDSC', 9, LOAD_FILE('c:\\wamp64\\tmp\\santaclara.png'), '1927'),
+(11, 'FC Porto', 'FCP', 6, LOAD_FILE('c:\\wamp64\\tmp\\fcporto.png'), '1893'),
+(12, 'Rio Ave', 'RAFC', 10, LOAD_FILE('c:\\wamp64\\tmp\\rioave.png'), '1939');
 
 -- Inserir dados na tabela estadio(id,nome,lotacao,id_equipa_estadio,id_cidade)
  INSERT INTO estadio VALUES 
