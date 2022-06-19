@@ -3,7 +3,7 @@ TeSP_PSI_2022_CDBD
 Sistema de Informação para a Gestão de Torneios de Futebol da Europa
 Eurofut
 António Russo Figueiras, estudante n.º 2211864
-Gilberto Gil Carvalho, estudante n.º 2120013
+Gilberto Gil Carvalho, estudante n.º 2211878
 */
 
 DROP DATABASE IF EXISTS EuroFut;
@@ -35,6 +35,7 @@ CREATE TABLE equipa(
     abreviatura			VARCHAR(4) NOT NULL,
     id_cidade			INT UNSIGNED NOT NULL,
     bandeira			BLOB,
+    ano_fundada			YEAR,
     CONSTRAINT pk_equipas PRIMARY KEY(id_equipa),
     CONSTRAINT fk_equipa_cidade FOREIGN KEY(id_cidade) REFERENCES cidade(id_cidade)
 ) ENGINE=InnoDB;
@@ -140,7 +141,6 @@ CREATE TABLE  equipa_torneio(
     id_equipa				INT UNSIGNED NOT NULL,
 	id_torneio_epoca		INT UNSIGNED NOT NULL,
     grupo					VARCHAR(1) NOT NULL,
-    posicao_final			INT,
     CONSTRAINT pk_equipa_torneio PRIMARY KEY(id_equipa_torneio),
     CONSTRAINT fk_equipatorneio_equipa 		FOREIGN KEY (id_equipa) REFERENCES equipa(id_equipa),
     CONSTRAINT fk_equipatorneio_torneio_epoca	FOREIGN KEY (id_torneio_epoca) REFERENCES torneio_epoca(id_torneio_epoca)
@@ -151,6 +151,8 @@ CREATE TABLE  jogo(
 	id_jogo				INT UNSIGNED AUTO_INCREMENT,
     id_equipa_casa		INT NOT NULL,
     id_equipa_fora		INT NOT NULL,
+    golos_equipa_casa	INT NOT NULL,
+    golos_equipa_fora	INT NOT NULL,
     fase_jogo			ENUM('G','R','Q','S','F') NOT NULL, /*G-FASE DE GRUPOS, R-RONDA 16, Q-QUARTOS DE FINAL, S-SEMIFINAL, F-FINAL*/
     id_torneio_epoca	INT UNSIGNED NOT NULL,
     jogo_data			DATETIME,
@@ -165,20 +167,6 @@ CREATE TABLE  jogo(
     CONSTRAINT fk_jogo_jdpartida	FOREIGN KEY(id_jogador_da_partida) REFERENCES jogador(id_jogador)
 ) ENGINE=InnoDB;
 
--- Criar a tabela jogo
-CREATE TABLE  jogo_detalhes(
-	id_jogo_detalhes	INT	UNSIGNED AUTO_INCREMENT,
-	id_jogo				INT UNSIGNED,
-    id_equipa			INT UNSIGNED,
-    golos               INT UNSIGNED,
-    resultado			ENUM('V', 'D', 'E'), /*V-Vitoria, D-Derrota, E-Empate*/
-    id_capitao			INT UNSIGNED,
-    CONSTRAINT pk_jogodetalhes	PRIMARY KEY (id_jogo_detalhes),
-    CONSTRAINT fk_jogodetalhes_jogo FOREIGN KEY(id_jogo) REFERENCES jogo(id_jogo),
-    CONSTRAINT fk_jogodetalhes_capitao FOREIGN KEY(id_capitao) REFERENCES jogador(id_jogador),
-    CONSTRAINT fk_jogodetalhes_equipa FOREIGN KEY(id_equipa) REFERENCES equipa(id_equipa)
-) ENGINE=InnoDB;
-
 -- Criar a tabela jogador_jogo_detalhes
 CREATE TABLE jogador_jogo_detalhes(
     id_jogador_jogo_detalhes    INT UNSIGNED AUTO_INCREMENT,
@@ -187,10 +175,10 @@ CREATE TABLE jogador_jogo_detalhes(
     nota                        INT UNSIGNED,
     minutos_jogados             INT UNSIGNED,
     golos                       INT UNSIGNED,
+    assistencias                INT UNSIGNED,
     auto_golos                  INT UNSIGNED,
     golos_penalti               INT UNSIGNED,
     penalti_defendidos          INT UNSIGNED,
-    assistencias                INT UNSIGNED,
     remates                     INT UNSIGNED,
     remates_baliza              INT UNSIGNED,
     cartoes_amarelos            INT UNSIGNED,
